@@ -1,0 +1,495 @@
+/* ============================================================
+   调酒 demo — 极简编辑风
+   规范：暖白底 / 无渐变 / 无重阴影 / 1px 浅灰细线 / 大留白
+   ============================================================ */
+
+:root {
+  --bg: #F7F6F3;
+  --surface: #FFFFFF;
+  --ink: #111111;
+  --ink-soft: #2F3437;
+  --muted: #787774;
+  --faint: #B9B5AE;
+  --line: #EAEAEA;
+  --serif: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif;
+  --sans: -apple-system, "PingFang SC", "Helvetica Neue", "Switzer", sans-serif;
+  --mono: "SF Mono", "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+/* ---------- 装饰边框：alcohol content ---------- */
+/* 左右两侧竖排文字随页面滚动；上下两条横线固定在页面首尾 */
+
+.frame-side {
+  position: absolute;
+  top: 64px; /* 顶部留空，避开上横排，四角不重叠 */
+  z-index: 5;
+  writing-mode: vertical-rl;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  color: var(--faint);
+  text-transform: lowercase;
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#frame-left  { left: 16px; }
+#frame-right { right: 16px; }
+
+.frame-bar {
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  color: var(--faint);
+  text-transform: lowercase;
+  user-select: none;
+  pointer-events: none;
+  padding: 16px 0;
+  margin: 0 90px; /* 左右留边，避开竖排文字与右上角 logo，四角不重叠 */
+  text-align: center;
+}
+
+/* ---------- 通用容器 ---------- */
+
+.wrap {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 56px;
+}
+
+/* ---------- 滚动淡入 ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   主页
+   ============================================================ */
+
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 24px 48px;
+  text-align: center;
+}
+
+.hero-logo {
+  width: min(380px, 68vw);
+  height: auto;
+  mix-blend-mode: multiply; /* 让 logo 的白底融入页面暖白背景 */
+}
+
+.hero-tag {
+  margin-top: 40px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em; /* 抵消末字符间距，保持视觉居中 */
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--faint);
+  text-transform: uppercase;
+  animation: hint-float 2.4s ease-in-out infinite;
+}
+@keyframes hint-float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint { animation: none; }
+}
+
+/* ---------- 六大基酒列表 ---------- */
+
+.spirits {
+  padding: 120px 0 140px;
+}
+
+.spirits-head {
+  max-width: 920px;
+  margin: 0 auto 64px;
+  padding: 0 56px;
+}
+
+.spirits-head h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: 0.08em;
+}
+
+.spirits-head p {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 14px;
+  max-width: 32em;
+}
+
+.spirit-list {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 56px;
+}
+
+.spirit-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: baseline;
+  gap: 24px;
+  padding: 34px 12px;
+  border-top: 1px solid var(--line);
+  transition: background 0.2s ease;
+}
+.spirit-row:last-child { border-bottom: 1px solid var(--line); }
+
+.spirit-row:hover { background: var(--surface); }
+
+.spirit-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.spirit-name {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3.4vw, 34px);
+  letter-spacing: 0.14em;
+}
+
+.spirit-name small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.spirit-desc {
+  grid-column: 2 / 4;
+  color: var(--muted);
+  font-size: 13.5px;
+  max-width: 40em;
+  margin-top: -6px;
+}
+
+.spirit-arrow {
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--faint);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.spirit-row:hover .spirit-arrow {
+  transform: translateX(4px);
+  color: var(--ink);
+}
+
+/* ============================================================
+   基酒详情页
+   ============================================================ */
+
+/* 右上角小 logo（固定） */
+.corner-logo {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  width: 68px;
+  height: auto;
+  z-index: 20;
+  mix-blend-mode: multiply; /* 让 logo 白底融入页面背景（需作用于整个元素） */
+}
+.corner-logo img { width: 100%; }
+
+.back-link {
+  position: fixed;
+  top: 22px;
+  left: 48px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.back-link .back-arrow {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+.back-link:hover {
+  color: var(--ink);
+  background: var(--bg);
+  border-color: var(--faint);
+}
+.back-link:hover .back-arrow { transform: translateX(-4px); }
+.back-link:active { transform: scale(0.98); }
+
+/* 首屏：基酒大字 */
+.spirit-hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 96px 24px 64px;
+}
+
+.spirit-hero h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(72px, 16vw, 168px);
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  line-height: 1.15;
+}
+
+.spirit-hero .en {
+  margin-top: 20px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.6em;
+  text-indent: 0.6em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.spirit-hero .desc {
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: 14.5px;
+  max-width: 26em;
+}
+
+/* ---------- 调酒卡片 ---------- */
+
+.drinks { padding: 40px 0 120px; }
+
+.drink {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 88px 56px;
+  border-top: 1px solid var(--line);
+}
+.drink:first-child { border-top: none; }
+
+.drink-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 360px) 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.drink:nth-child(even) .drink-grid { direction: rtl; }
+.drink:nth-child(even) .drink-grid > * { direction: ltr; }
+
+.drink-img {
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--surface);
+}
+.drink-img img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+.drink-head .num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--faint);
+  letter-spacing: 0.3em;
+}
+
+.drink-head h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(30px, 4vw, 42px);
+  letter-spacing: 0.1em;
+  margin-top: 10px;
+}
+
+.drink-head .en {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* 配料表 */
+.drink-section-title {
+  margin-top: 36px;
+  margin-bottom: 12px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.35em;
+  color: var(--faint);
+  text-transform: uppercase;
+}
+
+.ing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.ing-row .amt {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* 手法与杯型 */
+.method-name {
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+.method-steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 10px 0 0;
+  padding: 0;
+  max-width: 38em;
+}
+.method-steps li {
+  position: relative;
+  counter-increment: step;
+  padding: 8px 0 8px 30px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.method-steps li:last-child { border-bottom: none; }
+.method-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 2px;
+  top: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--faint);
+}
+.shaker-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.shaker-note .shaker-dot { color: var(--faint); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  padding: 5px 12px;
+  border-radius: 9999px;
+}
+.tag-blue   { background: #E1F3FE; color: #1F6C9F; }
+.tag-yellow { background: #FBF3DB; color: #956400; }
+.tag-green  { background: #EDF3EC; color: #346538; }
+
+/* ---------- 页脚 ---------- */
+
+footer {
+  border-top: 1px solid var(--line);
+  padding: 56px 24px 72px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+footer .brand {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 10px;
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+
+@media (max-width: 760px) {
+  .wrap, .spirits-head, .spirit-list, .drink { padding-left: 24px; padding-right: 24px; }
+  .frame-side { display: none; }
+  .frame-bar { margin: 0 16px; }
+  .drink-grid,
+  .drink:nth-child(even) .drink-grid {
+    grid-template-columns: 1fr;
+    direction: ltr;
+    gap: 32px;
+  }
+  .drink-img img { aspect-ratio: 3 / 4; }
+  .back-link { top: 18px; left: 16px; padding: 9px 15px; font-size: 12.5px; }
+  .corner-logo { top: 18px; right: 16px; width: 56px; }
+  .spirit-row { grid-template-columns: 40px 1fr auto; gap: 14px; padding: 26px 8px; }
+}

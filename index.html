@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>9° 调酒手册</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 装饰边框：左右竖排文字（随页面滚动） -->
+  <div class="frame-side" id="frame-left" aria-hidden="true"></div>
+  <div class="frame-side" id="frame-right" aria-hidden="true"></div>
+
+  <!-- 顶部装饰文字条 -->
+  <div class="frame-bar" aria-hidden="true"></div>
+
+  <main>
+    <!-- 首屏：logo -->
+    <section class="hero">
+      <img class="hero-logo" src="assets/logo-crop.jpg" alt="9° Alcohol Content logo">
+      <div class="hero-tag">调酒手册 · Cocktail Guide</div>
+      <div class="scroll-hint">向下滑动 ↓</div>
+    </section>
+
+    <!-- 六大基酒 -->
+    <section class="spirits" id="spirits">
+      <div class="spirits-head reveal">
+        <h2>六大基酒</h2>
+        <p>每一杯经典调酒，都从一种基酒开始。选择你要探索的烈酒。</p>
+      </div>
+      <nav class="spirit-list" id="spirit-list">
+        <!-- 由 script.js 渲染 -->
+      </nav>
+    </section>
+  </main>
+
+  <footer>
+    <div class="brand">alcohol content · 9°</div>
+    <p>适度饮酒 · 未成年人请勿饮酒</p>
+  </footer>
+
+  <!-- 底部装饰文字条 -->
+  <div class="frame-bar" aria-hidden="true"></div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
